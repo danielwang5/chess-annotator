@@ -13,6 +13,7 @@ def get_annotation_from_chatgpt(prompt: str) -> str:
     try:
         # Combine system instructions with the user prompt.
         combined_input = "You are a chess annotation expert. " + prompt
+        print(f"IIIIIIIII: {combined_input}")
 
         # Call the API using the gpt-4o model.
         response = client.responses.create(
@@ -20,8 +21,6 @@ def get_annotation_from_chatgpt(prompt: str) -> str:
             model="gpt-4o",
             temperature=0.7,
         )
-        # Debug print the full response.
-        print("DEBUG: Full response object:", response)
 
         # Extract the generated text from the nested response structure.
         annotation = ""
@@ -32,8 +31,6 @@ def get_annotation_from_chatgpt(prompt: str) -> str:
                 # Get the first text object in the content list.
                 first_text_obj = first_message.content[0]
                 annotation = first_text_obj.text
-
-        print("DEBUG: Extracted annotation:", annotation)
         return annotation.strip()
     except Exception as e:
         print("Error calling ChatGPT API:", e)

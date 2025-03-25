@@ -14,29 +14,44 @@ def format_eval_tree(eval_tree: dict, indent: int = 0) -> str:
             lines.append(subtree_str)
     return "\n".join(lines)
 
-def create_annotation_prompt(fen: str, eval_tree: dict) -> str:
+def create_annotation_prompt(fen: str, eval_tree: dict, last_move_details: dict = None) -> str:
     """
-    Creates a prompt for ChatGPT using the given FEN and evaluation tree.
+    Creates a prompt for ChatGPT including the last move details.
+    If last_move_details is provided, it should be a dict with keys:
+    'move_san', 'from', 'to', and 'piece_type'.
+    The prompt now instructs the model to be concise (using partial sentences if needed).
     """
+    if last_move_details is None:
+        last_move_str = "None (starting position)"
+    else:
+        last_move_str = (
+            f"{last_move_details['move_san']} (a {last_move_details['piece_type']} "
+            f"from {last_move_details['from']} to {last_move_details['to']})"
+        )
+    
     eval_tree_str = format_eval_tree(eval_tree)
     prompt = (
-        f"You are a chess expert. Analyze the following position and provide a concise annotation explaining "
-        f"the strategic ideas and potential plans.\n\n"
+        f"You are a chess expert. Focus your analysis on the last move played, which is {last_move_str}. "
+        "Provide a concise annotation, using partial sentences if needed, that explains the strategic impact "
+        "and potential plans arising from the move.\n\n"
         f"Position (FEN): {fen}\n\n"
         f"Evaluation Tree (top moves for the next moves):\n{eval_tree_str}\n\n"
-        f"Annotation (in one sentence if the position is simple, or a full paragraph if the position is rich):"
-        f"Also comment on the position based on ideas presented by the candidate moves and corresponding evals "
-        f"rather than just listing the things off of the move tree. Think about the ideas, and don't mention the "
-        f"evaluation tree contents at all in your response."
+        "Annotation (concise):"
     )
     return prompt
 
 # For testing:
 if __name__ == "__main__":
-    sample_fen = "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 4"
+    sample_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     sample_tree = {
-        "O-O": {"move": "e1g1", "score": 0.2, "subtree": {}},
-        "Nc3": {"move": "b1c3", "score": 0.1, "subtree": {}},
+        "e4": {"move": "e2e4", "score": 0.3, "subtree": {}},
+        "d4": {"move": "d2d4", "score": 0.1, "subtree": {}},
     }
-    prompt = create_annotation_prompt(sample_fen, sample_tree)
+    last_move_details = {
+        "move_san": "e4",
+        "from": "e2",
+        "to": "e4",
+        "piece_type": "P"
+    }
+    prompt = create_annotation_prompt(sample_fen, sample_tree, last_move_details=last_move_details)
     print(prompt)
