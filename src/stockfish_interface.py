@@ -1,4 +1,4 @@
-# stockfish_interface.py (updated get_top_moves with engine restart)
+# stockfish_interface.py (complete revised version)
 
 import chess
 import chess.engine
@@ -17,7 +17,6 @@ class StockfishAnalyzer:
             return self.engine.analyse(board, chess.engine.Limit(time=time_limit), multipv=multipv)
         except chess.engine.EngineTerminatedError as e:
             print("Engine terminated unexpectedly. Restarting engine and retrying analysis...")
-            # Restart the engine
             self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
             return self.engine.analyse(board, chess.engine.Limit(time=time_limit), multipv=multipv)
 
@@ -40,15 +39,13 @@ class StockfishAnalyzer:
                 score = 0.0
             elif score_obj.is_mate():
                 try:
-                    mate_val = score_obj.mate()  # use the attribute, not a method
-                    #print(f"MATEVAL: {mate_val}")
+                    mate_val = score_obj.mate()  # use the method as in your working version
                     score = float("inf") if mate_val > 0 else float("-inf")
                 except Exception as e:
                     score = 0.0
             else:
                 try:
                     cp_value = score_obj.white().score()  # use the score() method
-                    #print(f"CPVALUE: {cp_value}")
                     score = (cp_value / 100.0) if cp_value is not None else 0.0
                 except Exception as e:
                     score = 0.0
@@ -58,7 +55,6 @@ class StockfishAnalyzer:
                 "score": score
             })
         return top_moves
-
 
     def build_eval_tree(self, board: chess.Board, ply_depth: int) -> Dict[str, Any]:
         if ply_depth == 0 or board.is_game_over():
@@ -111,12 +107,38 @@ class StockfishAnalyzer:
             }
         return tree
 
+    def get_current_eval(self, board: chess.Board, time_limit: float = ENGINE_TIME_LIMIT) -> float:
+        """
+        Get a single evaluation for the current board state.
+        Returns the centipawn score (divided by 100) or a mate value.
+        """
+        info = self.engine.analyse(board, chess.engine.Limit(time=time_limit), multipv=1)
+        if not info:
+            return 0.0
+        score_obj = info[0].get("score")
+        if score_obj is None:
+            return 0.0
+        elif score_obj.is_mate():
+            try:
+                mate_val = score_obj.mate()  # use the method as before
+                return float("inf") if mate_val > 0 else float("-inf")
+            except Exception as e:
+                return 0.0
+        else:
+            try:
+                cp_value = score_obj.white().score()
+                return (cp_value / 100.0) if cp_value is not None else 0.0
+            except Exception as e:
+                return 0.0
+
 # For testing:
 if __name__ == "__main__":
     analyzer = StockfishAnalyzer()
     board = chess.Board()  # Starting position
     eval_tree = analyzer.build_eval_tree(board, ply_depth=2)
     threat_tree = analyzer.build_threat_tree(board, ply_depth=1, player_color=True)
+    current_eval = analyzer.get_current_eval(board)
     print("Evaluation tree (depth=2):", eval_tree)
     print("Threat tree (depth=1):", threat_tree)
+    print("Current evaluation:", current_eval)
     analyzer.close()

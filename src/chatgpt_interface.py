@@ -1,28 +1,25 @@
+# chatgpt_interface.py
 import openai
 import concurrent.futures
 from src.config import OPENAI_API_KEY
 
-# Initialize the OpenAI client with your API key.
-client = openai.Client(api_key=OPENAI_API_KEY)
+# Set your API key for the OpenAI module.
+openai.api_key = OPENAI_API_KEY
 
 def get_annotation_from_chatgpt(prompt: str) -> str:
     """
-    Sends the given prompt (with internal context) to the GPT-4o model
-    using the new API (client.responses.create) and returns the generated annotation.
+    Sends the given prompt (with internal context) to the GPT-4 model using the new
+    ChatCompletion.create API and returns the generated annotation.
     """
     try:
-        response = client.responses.create(
-            input=prompt,
-            model="gpt-4o",
+        response = openai.chat.completions.create(
+            model="gpt-4",  # Use a model you have access to (e.g., "gpt-4")
+            messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
+            max_tokens=150  # Adjust as needed for brevity.
         )
-        # Extract the annotation from the response's nested structure.
-        annotation = ""
-        if hasattr(response, "output") and response.output:
-            first_message = response.output[0]
-            if hasattr(first_message, "content") and first_message.content:
-                first_text_obj = first_message.content[0]
-                annotation = first_text_obj.text
+        # Extract the annotation from the response.
+        annotation = response.choices[0].message.content
         return annotation.strip()
     except Exception as e:
         print("Error calling ChatGPT API:", e)

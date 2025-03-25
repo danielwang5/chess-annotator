@@ -2,7 +2,7 @@
 from src.pgn_parser import PGNTreeNode, parse_pgn_to_tree
 from src.stockfish_interface import StockfishAnalyzer
 from src.prompt_engineering import create_annotation_prompt
-from src.chatgpt_interface import get_annotation_from_chatgpt
+from src.chatgpt_interface import get_annotation_with_timeout
 from tqdm import tqdm
 
 def annotate_main_line(root: PGNTreeNode, analyzer: StockfishAnalyzer, ply_depth: int):
@@ -15,13 +15,13 @@ def annotate_main_line(root: PGNTreeNode, analyzer: StockfishAnalyzer, ply_depth
         else:
             break
 
-    # Retrieve player's color from the root.
     player_color = root.player_color
 
     for node in tqdm(nodes, desc="Annotating moves"):
         fen = node.board.fen()
         eval_tree = analyzer.build_eval_tree(node.board, ply_depth)
         threat_tree = analyzer.build_threat_tree(node.board, 1, player_color)
+        current_eval = analyzer.get_current_eval(node.board)
         if node.move is None:
             last_move_details = None
         else:
@@ -31,8 +31,8 @@ def annotate_main_line(root: PGNTreeNode, analyzer: StockfishAnalyzer, ply_depth
                 "to": node.to_square,
                 "piece_type": node.piece_type,
             }
-        prompt = create_annotation_prompt(fen, eval_tree, threat_tree, last_move_details)
-        annotation = get_annotation_from_chatgpt(prompt)
+        prompt = create_annotation_prompt(fen, current_eval, eval_tree, threat_tree, last_move_details)
+        annotation = get_annotation_with_timeout(prompt, timeout=60)
         node.annotation = annotation
 
 def generate_annotations_for_game(pgn_file: str, ply_depth: int) -> PGNTreeNode:

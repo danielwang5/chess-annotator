@@ -1,0 +1,6 @@
+Chess Annotator TODOs
+
+- specify eval change of current move, and delta
+- prompt elaborate what the eval and threat trees do
+- consider changing the threat tree to the previous move, to see which threats the most recent move addresses
+- Prompt engineer better (annotations have no ideas)
