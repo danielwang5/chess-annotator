@@ -1,15 +1,20 @@
 # prompt_engineering.py
 
-def format_eval_tree(eval_tree: dict, indent: int = 0) -> str:
-    """Recursively formats the tree into a compact bullet list."""
+def format_eval_tree(eval_tree: dict, depth: int = 0) -> str:
+    """
+    Recursively formats the evaluation tree into a Markdown nested bullet list.
+    Each move is listed with a bullet point, indented by two spaces per depth level.
+    """
     lines = []
-    indent_str = " " * indent
+    indent = "  " * depth
     for move_san, info in eval_tree.items():
-        line = f"{indent_str}{move_san}: {info['score']}"
+        line = f"{indent}- {move_san}: {info['score']}"
         lines.append(line)
         if info["subtree"]:
-            lines.append(format_eval_tree(info["subtree"], indent=indent+2))
+            subtree_str = format_eval_tree(info["subtree"], depth=depth+1)
+            lines.append(subtree_str)
     return "\n".join(lines)
+
 
 def create_annotation_prompt(fen: str, eval_tree: dict, threat_tree: dict, last_move_details: dict = None) -> str:
     """

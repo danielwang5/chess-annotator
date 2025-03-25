@@ -1,0 +1,25 @@
+[Event "Action Mar 2025: Fools Mate"]
+[Site "https://lichess.org/study/LvPFUmjx/eSPothmA"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "?"]
+[Result "*"]
+[Variant "Standard"]
+[ECO "A00"]
+[Opening "Barnes Opening: Fool's Mate"]
+[Annotator "https://lichess.org/@/AnkleDealer"]
+[StudyName "Action Mar 2025"]
+[ChapterName "Fools Mate"]
+[UTCDate "2025.03.25"]
+[UTCTime "06:54:20"]
+
+1. f3
+{ White's move f3 weakens their king's diagonal and slightly hinders piece development, allowing Black to seize the initiative with central pawn breaks. }
+1... e5
+{ Black's e5 move gains central space and prepares to challenge White's center, but leaves the d5 square as a potential target for White's knight or pawn advance. }
+2. g4
+{ The move g4 weakens White's kingside and allows Black to seize the initiative with Qh4#, creating immediate threats against White's king. }
+2... Qh4#
+{ Black delivers checkmate with Qh4#, exploiting the weakened f2 square and White's undeveloped pieces. }
+*
