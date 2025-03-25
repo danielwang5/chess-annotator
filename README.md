@@ -35,7 +35,7 @@ chess_annotation_project/
 ## Running the Project
 To run the annotation pipeline:
 ```bash
-python src/main.py --pgn data/raw/sample.pgn --ply_depth 2
+python3 -m src.main --pgn data/raw/sample.pgn --ply_depth 2
 ```
 
 ## Testing

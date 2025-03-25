@@ -25,6 +25,9 @@ def create_annotation_prompt(fen: str, eval_tree: dict) -> str:
         f"Position (FEN): {fen}\n\n"
         f"Evaluation Tree (top moves for the next moves):\n{eval_tree_str}\n\n"
         f"Annotation (in one sentence if the position is simple, or a full paragraph if the position is rich):"
+        f"Also comment on the position based on ideas presented by the candidate moves and corresponding evals "
+        f"rather than just listing the things off of the move tree. Think about the ideas, and don't mention the "
+        f"evaluation tree contents at all in your response."
     )
     return prompt
 

@@ -1,4 +1,4 @@
 # requirements.txt
-python-chess==0.29.0
-python-dotenv==0.20.0
-openai==0.6.4
+python-chess == 1.999
+python-dotenv >= 0.20.0
+openai >= 0.6.4

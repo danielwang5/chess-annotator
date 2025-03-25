@@ -1,7 +1,16 @@
 # stockfish_interface.py
+import asyncio
+
+# Monkey-patch asyncio.Event to ignore the "loop" keyword argument for Python 3.10+
+_original_event_init = asyncio.Event.__init__
+def _new_event_init(self, *args, **kwargs):
+    if "loop" in kwargs:
+        del kwargs["loop"]
+    _original_event_init(self, *args, **kwargs)
+asyncio.Event.__init__ = _new_event_init
+
 import chess
 import chess.engine
-from typing import List, Dict, Any
 from src.config import STOCKFISH_PATH, ENGINE_TIME_LIMIT, ENGINE_DEPTH, ENGINE_MULTIPV
 
 class StockfishAnalyzer:
@@ -11,15 +20,10 @@ class StockfishAnalyzer:
     def close(self):
         self.engine.quit()
 
-    def get_top_moves(self, board: chess.Board, multipv: int = ENGINE_MULTIPV, time_limit: float = ENGINE_TIME_LIMIT) -> List[Dict[str, Any]]:
-        """
-        Analyze the given board and return the top moves with evaluations.
-        Returns a list of dictionaries with keys: move (chess.Move), san (string), score (float).
-        """
+    def get_top_moves(self, board: chess.Board, multipv: int = ENGINE_MULTIPV, time_limit: float = ENGINE_TIME_LIMIT):
         info = self.engine.analyse(board, chess.engine.Limit(time=time_limit), multipv=multipv)
         top_moves = []
         for item in info:
-            # Get the first move from the principal variation
             move = item.get("pv")[0] if "pv" in item and len(item["pv"]) > 0 else None
             score_obj = item.get("score")
             if score_obj.is_mate():
@@ -34,16 +38,9 @@ class StockfishAnalyzer:
                 })
         return top_moves
 
-    def build_eval_tree(self, board: chess.Board, ply_depth: int) -> Dict[str, Any]:
-        """
-        Recursively builds an evaluation tree for the given board.
-        For each position, it records the top moves (with evaluation scores) and recurses
-        until the specified ply_depth is reached.
-        Returns a dictionary representing the tree.
-        """
+    def build_eval_tree(self, board: chess.Board, ply_depth: int):
         if ply_depth == 0 or board.is_game_over():
             return {}
-
         top_moves = self.get_top_moves(board)
         tree = {}
         for move_info in top_moves:
