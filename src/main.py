@@ -14,6 +14,15 @@ def gather_no_loop(*args, **kwargs):
 asyncio.gather = gather_no_loop
 # -----------------------------------------------------------------------
 
+# --- Monkey-patch asyncio.Event.__init__ to ignore "loop" argument ---
+_original_event_init = asyncio.Event.__init__
+def new_event_init(self, *args, **kwargs):
+    if "loop" in kwargs:
+        del kwargs["loop"]
+    _original_event_init(self, *args, **kwargs)
+asyncio.Event.__init__ = new_event_init
+# -----------------------------------------------------------------------
+
 def print_mainline_annotations(node: PGNTreeNode, depth: int = 0):
     indent = " " * (depth * 2)
     # Use the stored SAN notation if available; for the root, show "Start".

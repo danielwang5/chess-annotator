@@ -11,10 +11,11 @@ class PGNTreeNode:
         self.move_san = move_san         # SAN notation for the move.
         self.from_square = from_square   # Starting square (e.g., "e2").
         self.to_square = to_square       # Ending square (e.g., "e4").
-        self.piece_type = piece_type     # Piece type (e.g., "P", "N", "B", etc.). Ensure bishop is uppercase.
+        self.piece_type = piece_type     # Piece type (e.g., "P", "N", "B", etc.).
         self.children = []               # For main line, a single-element list.
         self.annotation: Optional[str] = None  # Annotation text.
-        self.headers = {}                # To store original PGN headers (set on the root).
+        self.headers = {}                # To store original PGN headers (set on the root)
+        self.player_color = None         # Will be set on the root (True for White, False for Black)
 
     def add_child(self, child_node: 'PGNTreeNode'):
         self.children.append(child_node)
@@ -22,8 +23,8 @@ class PGNTreeNode:
 def parse_pgn_to_tree(pgn_file_path: str) -> PGNTreeNode:
     """
     Parse a PGN file and return a linear tree (only the main line).
-    Stores each move’s SAN, starting/ending squares, and piece type.
-    Also preserves the original PGN headers.
+    Stores each move’s SAN, starting/ending squares, piece type, and preserves the original PGN headers.
+    Also stores the player's color (from the starting position) on the root.
     """
     with open(pgn_file_path) as pgn_file:
         game = chess.pgn.read_game(pgn_file)
@@ -33,6 +34,8 @@ def parse_pgn_to_tree(pgn_file_path: str) -> PGNTreeNode:
     board = game.board()
     root = PGNTreeNode(board=board)
     root.headers = game.headers.copy()  # Preserve headers.
+    # Store player's color from starting position.
+    root.player_color = board.turn
     current_node = root
 
     for move in game.mainline_moves():
@@ -40,7 +43,9 @@ def parse_pgn_to_tree(pgn_file_path: str) -> PGNTreeNode:
         from_sq = chess.square_name(move.from_square)
         to_sq = chess.square_name(move.to_square)
         piece = board.piece_at(move.from_square)
-        piece_str = piece.symbol().upper() if piece is not None else "Unknown"
+        piece_str = piece.symbol() if piece is not None else "Unknown"
+        if piece_str.lower() == "b":
+            piece_str = "B"  # Force bishop uppercase.
         board.push(move)
         child_node = PGNTreeNode(
             board=board.copy(),
@@ -58,7 +63,7 @@ def parse_pgn_to_tree(pgn_file_path: str) -> PGNTreeNode:
 # For testing:
 if __name__ == "__main__":
     tree = parse_pgn_to_tree("data/raw/mini.pgn")
-    print("Mainline PGN tree parsed successfully.")
+    print("Player color (True=White, False=Black):", tree.player_color)
     current = tree
     while current.children:
         current = current.children[0]

@@ -5,25 +5,25 @@
 [White "?"]
 [Black "?"]
 [Result "*"]
-[Annotator "https://lichess.org/@/AnkleDealer"]
-[ChapterName "Chapter 14"]
+[Variant "Standard"]
 [ECO "E61"]
 [Opening "King's Indian Defense"]
+[Annotator "https://lichess.org/@/AnkleDealer"]
 [StudyName "Action Mar 2025"]
+[ChapterName "Chapter 14"]
 [UTCDate "2025.03.25"]
 [UTCTime "04:36:02"]
-[Variant "Standard"]
 
 1. d4
-{ The move 1. d4 establishes central control and prepares for potential pawn breaks and piece development, aiming for a flexible setup where White can opt for a variety of plans such as c4 to support the d4 pawn, Nf3 to develop the knight, or Bf4 for piece activity, while Black's best responses include Nf6 or d5 to contest the center and develop pieces harmoniously. }
+{ White's move d4 establishes a strong central presence, challenging Black to either contest the center immediately with d5 or develop with moves like Nf6 or e6. }
 1... Nf6
-{ The move Nf6 develops the knight to a natural square, supporting control over the central e4 and d5 squares, and prepares for potential kingside castling, while maintaining flexibility for Black's pawn structure and piece coordination. }
+{ Black's move Nf6 develops a knight to a natural square, preparing to contest the center and supporting potential pawn breaks like d5 or e6. }
 2. c4
-{ The move 2. c4 is a bold gambit known as the English Opening, aiming to control the center and prepare for rapid development, while offering dynamic opportunities; it puts immediate pressure on Black's d5 square, encourages Black to commit to a pawn structure, and can lead to fluid pawn breaks or development with moves like Nc3 and g3, setting the stage for a fianchetto of the bishop. }
+{ White's move 2.c4 aims to control the center and prepares to support the d4 pawn, providing a solid foundation for potential central expansion and piece development. }
 2... g6
-{ In the given position, Black's move g6 aims to prepare for the fianchetto of the bishop to g7, which will increase control over the central light squares, particularly d4 and e5, and contribute to a solid defensive setup, while White can consider developing with Nc3 or Nf3 to enhance central control and prepare for kingside expansion or e4 pawn breaks. }
+{ The move 3...g6 prepares to fianchetto the bishop, aiming for improved control of the center and long diagonal, while slightly weakening the dark squares around the king. }
 3. Nc3
-{ The move Nc3 supports White's central pawn on d4, enhances control over the e4 square, and prepares for potential development of the bishop on c1, while increasing pressure on Black to decide on a pawn structure, particularly considering potential pawn breaks with d5 or d6. }
+{ White's move Nc3 strengthens central control and develops a piece, preparing for potential pawn advances or piece coordination, increasing pressure on Black's setup. }
 3... Bg7
-{ The move 3...Bg7 completes Black's kingside fianchetto, aiming to control the central and long diagonal (a1-h8) while preparing for kingside castling, and it also indirectly pressures White's center, particularly the d4 pawn, suggesting Black's intent to maintain a solid and flexible position with potential counterplay against White's central pawns. }
+{ The move Bg7 enhances Black's control of the central dark squares, prepares kingside castling, and aligns the bishop with White's central pawn structure. }
 *

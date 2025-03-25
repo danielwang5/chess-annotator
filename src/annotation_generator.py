@@ -6,11 +6,6 @@ from src.chatgpt_interface import get_annotation_from_chatgpt
 from tqdm import tqdm
 
 def annotate_main_line(root: PGNTreeNode, analyzer: StockfishAnalyzer, ply_depth: int):
-    """
-    Annotate the main line (a linear chain of nodes) with ChatGPT annotations,
-    displaying a progress bar.
-    """
-    # Collect all nodes along the main line.
     nodes = []
     current = root
     while current:
@@ -19,11 +14,14 @@ def annotate_main_line(root: PGNTreeNode, analyzer: StockfishAnalyzer, ply_depth
             current = current.children[0]
         else:
             break
-    
-    # Annotate each node.
+
+    # Retrieve player's color from the root.
+    player_color = root.player_color
+
     for node in tqdm(nodes, desc="Annotating moves"):
         fen = node.board.fen()
         eval_tree = analyzer.build_eval_tree(node.board, ply_depth)
+        threat_tree = analyzer.build_threat_tree(node.board, 1, player_color)
         if node.move is None:
             last_move_details = None
         else:
@@ -33,15 +31,11 @@ def annotate_main_line(root: PGNTreeNode, analyzer: StockfishAnalyzer, ply_depth
                 "to": node.to_square,
                 "piece_type": node.piece_type,
             }
-        prompt = create_annotation_prompt(fen, eval_tree, last_move_details)
+        prompt = create_annotation_prompt(fen, eval_tree, threat_tree, last_move_details)
         annotation = get_annotation_from_chatgpt(prompt)
         node.annotation = annotation
 
 def generate_annotations_for_game(pgn_file: str, ply_depth: int) -> PGNTreeNode:
-    """
-    Parse a PGN file, annotate the main line with commentary,
-    and return the annotated tree.
-    """
     root = parse_pgn_to_tree(pgn_file)
     analyzer = StockfishAnalyzer()
     annotate_main_line(root, analyzer, ply_depth)
@@ -50,7 +44,7 @@ def generate_annotations_for_game(pgn_file: str, ply_depth: int) -> PGNTreeNode:
 
 # For testing:
 if __name__ == "__main__":
-    tree = generate_annotations_for_game("data/raw/mini.pgn", ply_depth=2)
+    tree = generate_annotations_for_game("data/raw/mini.pgn", ply_depth=3)
     print("Root annotation:")
     print(tree.annotation)
     if tree.children:
