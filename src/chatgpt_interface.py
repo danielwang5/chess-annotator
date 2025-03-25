@@ -20,16 +20,20 @@ def get_annotation_from_chatgpt(prompt: str) -> str:
             model="gpt-4o",
             temperature=0.7,
         )
-        
-        # Attempt to extract the generated text.
-        try:
-            # Try converting response.text to a dict and getting its "text" field.
-            text_dict = response.text.to_dict()
-            annotation = text_dict.get("text", "")
-        except Exception:
-            # Fallback: convert response.text to string.
-            annotation = str(response.text)
-        
+        # Debug print the full response.
+        print("DEBUG: Full response object:", response)
+
+        # Extract the generated text from the nested response structure.
+        annotation = ""
+        if hasattr(response, "output") and response.output:
+            # Get the first message in the output list.
+            first_message = response.output[0]
+            if hasattr(first_message, "content") and first_message.content:
+                # Get the first text object in the content list.
+                first_text_obj = first_message.content[0]
+                annotation = first_text_obj.text
+
+        print("DEBUG: Extracted annotation:", annotation)
         return annotation.strip()
     except Exception as e:
         print("Error calling ChatGPT API:", e)
@@ -38,4 +42,5 @@ def get_annotation_from_chatgpt(prompt: str) -> str:
 # For testing:
 if __name__ == "__main__":
     sample_prompt = "Analyze the following chess position: FEN: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-    print(get_annotation_from_chatgpt(sample_prompt))
+    output = get_annotation_from_chatgpt(sample_prompt)
+    print("Final output annotation:", output)

@@ -16,7 +16,7 @@ asyncio.gather = gather_no_loop
 
 def print_mainline_annotations(node: PGNTreeNode, depth: int = 0):
     indent = " " * (depth * 2)
-    # Use the stored SAN notation if available (or "Start" for the root).
+    # Use the stored SAN notation if available; for the root, show "Start".
     move_str = node.move_san if node.move_san else "Start"
     print(f"{indent}{move_str}: {node.annotation}")
     if node.children:
@@ -25,9 +25,12 @@ def print_mainline_annotations(node: PGNTreeNode, depth: int = 0):
 def convert_tree_to_pgn(root: PGNTreeNode) -> str:
     """
     Convert the annotated linear tree back into a PGN string.
-    Each move's annotation is added as a comment.
+    Preserves original headers and inserts each move's annotation as a comment.
     """
     game = chess.pgn.Game()
+    # Copy headers from the original PGN.
+    for key, value in root.headers.items():
+        game.headers[key] = value
     node = game
     current = root
     while current.children:
