@@ -15,19 +15,15 @@
 [UTCTime "04:36:02"]
 
 1. d4
-{ The last move was pawn to d4. The engine's evaluation of the position is 0.21, suggesting a slight edge to White. The engine's evaluation tree suggests that Black's best responses are Nf6 or d5, each leading to a roughly equal position. The move d6 would give White a more significant advantage, according to the engine. The engine also identifies Nf6, d5, and e6 as potential threats from Black. }
+{ The last move, advancing the pawn to d4, has established a strong central presence and opened up lines for the bishop and queen. }
 1... Nf6
-{ The current evaluation of the position is 0.28, slightly favoring white. The best move for white is likely Nf3 or c4, both with evaluations around 0.23. If white plays Nf3, black's best response would be g6 or d5. If white plays c4, black's best response would be e6 or d5. The moves d5, g6, and e6 also represent potential threats for black in the future, with d5 being the most threatening. }
+{ The last move Nf6 has slightly improved the position for black, but white still has a slight advantage. }
 2. c4
-{ After the last move c4, the current evaluation of the position is 0.32. The best responses for black are e6, c6, or g6, with the latter being slightly favored. Should black choose to play e6, white's best responses would be g3, Nf3 or Nc3. If black chooses c6, white's best responses would be e3, Nc3, or Nf3. And if black chooses g6, white's best responses would be Nf3, Nc3, or Qc2. The threat tree suggests that the moves c6, e6, and g6 pose similar levels of threat to white. }
+{ The last move, c4, opens up the board, giving the player more central control and options for future piece development. }
 2... g6
-{ The engine currently favors Nc3 as the best move for white, estimating an advantage of 0.35. The idea is to control the center and prepare to develop the bishop or queen. It then predicts black's responses and its own subsequent replies. If black responds with d5, white can maintain an advantage by playing Nf3 (0.31), Qb3 (0.22), or e3 (0.19). If black plays Bg7, white can play e4 (0.53), Nf3 (0.41), or h4 (0.21). If black plays d6, white can maintain the advantage by playing Nf3 (0.56), h3 (0.51), }
+{ The last move, g6, prepares for the fianchetto of the bishop and potentially strengthens black's control over the center squares. }
 3. Nc3
-{ The current position is relatively balanced, with a slight advantage for White. The best moves for Black would be to either develop their bishop to g7 or pawn to d6. The lines after these moves are generally solid and lead to a balanced position. The move d5 is also a possibility, but it less favorable due to a slightly lower evaluation. White has many reasonable responses to these moves, including developing their knight to f3, pushing their pawn to e4, or making a queen move to b3. }
+{ The last move Nc3 centralizes the knight, supporting the d4 pawn and preparing for potential control of the center by the white pieces. }
 3... Bg7
-{ The engine recommends 1.e4 as the best move, with an evaluation of 0.6. This move opens up lines for both the queen and bishop, allowing for greater control of the center. The engine expects 1...d6 in response, maintaining a flexible pawn structure. Alternatively, 1...O-O or 1...c5 could be played, though these moves are evaluated less favorably. 
-
-The engine also considers 1.Nf3, though with a lower evaluation of 0.32. This move develops the knight and prepares for kingside castling. The engine expects 1...d5 in response, challenging white's control of the center. 
-
-Finally, the engine evaluates 1.Qc2 with }
+{ The last move, Bg7, has solidified Black's kingside structure while simultaneously preparing to castle. }
 *

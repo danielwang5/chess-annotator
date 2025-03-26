@@ -17,23 +17,30 @@ def annotate_main_line(root: PGNTreeNode, analyzer: StockfishAnalyzer, ply_depth
 
     player_color = root.player_color
 
-    for node in tqdm(nodes, desc="Annotating moves"):
+    for i, node in enumerate(tqdm(nodes, desc="Annotating moves")):
         fen = node.board.fen()
         eval_tree = analyzer.build_eval_tree(node.board, ply_depth)
         threat_tree = analyzer.build_threat_tree(node.board, 1, player_color)
         current_eval = analyzer.get_current_eval(node.board)
+        
         if node.move is None:
             last_move_details = None
         else:
+            # Get previous evaluation from parent node's current evaluation
+            prev_eval = nodes[i-1].current_eval if i > 0 else 0.0
             last_move_details = {
                 "move_san": node.move_san,
                 "from": node.from_square,
                 "to": node.to_square,
                 "piece_type": node.piece_type,
+                "prev_eval": prev_eval,
+                "is_white": player_color
             }
         prompt = create_annotation_prompt(fen, current_eval, eval_tree, threat_tree, last_move_details)
         annotation = get_annotation_with_timeout(prompt, timeout=60)
         node.annotation = annotation
+        # Store current evaluation for next iteration
+        node.current_eval = current_eval
 
 def generate_annotations_for_game(pgn_file: str, ply_depth: int) -> PGNTreeNode:
     root = parse_pgn_to_tree(pgn_file)
