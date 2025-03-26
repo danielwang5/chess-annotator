@@ -15,15 +15,13 @@
 [UTCTime "04:36:02"]
 
 1. d4
-{ The last move, advancing the pawn to d4, has established a strong central presence and opened up lines for the bishop and queen. }
+{ The last move, d4, opens up lines for the queen and bishop, allowing for greater control of the center of the board. }
 1... Nf6
-{ The last move Nf6 has slightly improved the position for black, but white still has a slight advantage. }
-2. c4
-{ The last move, c4, opens up the board, giving the player more central control and options for future piece development. }
+{ The last move, Nf6, develops the knight and prepares for further control over the center of the board. }
+2. c4 { The last move c4 expands White's control in the center of the board. }
 2... g6
-{ The last move, g6, prepares for the fianchetto of the bishop and potentially strengthens black's control over the center squares. }
+{ The pawn move to g6 opens up lines for the bishop and queen, preparing for kingside fianchetto and future castling. }
 3. Nc3
-{ The last move Nc3 centralizes the knight, supporting the d4 pawn and preparing for potential control of the center by the white pieces. }
+{ The last move, Nc3, develops a piece while reinforcing control over the center squares. }
 3... Bg7
-{ The last move, Bg7, has solidified Black's kingside structure while simultaneously preparing to castle. }
-*
+{ By moving the bishop to g7, Black has prepared for a kingside castle. } *

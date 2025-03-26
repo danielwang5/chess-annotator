@@ -29,18 +29,22 @@ def transform_eval_to_rating(eval_value: float, prev_eval: float = 0.0, is_white
 
 def format_eval_tree(eval_tree: dict, depth: int = 0, prev_eval: float = 0.0, is_white: bool = True) -> str:
     """
-    Recursively formats the evaluation tree into a Markdown nested bullet list.
-    Each move is listed with a bullet point, indented by two spaces per depth level.
+    Recursively formats the evaluation tree into a nested parentheses format.
+    Each move is listed with its rating, and subtrees are nested in parentheses.
     """
+    if not eval_tree:
+        return ""
+    
     lines = []
     indent = "  " * depth
     for move_san, info in eval_tree.items():
         rating = transform_eval_to_rating(info['score'], prev_eval, is_white)
-        line = f"{indent}- {move_san}: {rating:.2f}"
-        lines.append(line)
+        line = f"{indent}{move_san}({rating:.2f}"
         if info["subtree"]:
-            lines.append(format_eval_tree(info["subtree"], depth=depth+1, prev_eval=info['score'], is_white=not is_white))
-    return "\n".join(lines)
+            line += " " + format_eval_tree(info["subtree"], depth=depth+1, prev_eval=info['score'], is_white=not is_white)
+        line += ")"
+        lines.append(line)
+    return " ".join(lines)
 
 def create_annotation_prompt(fen: str, current_eval: float, eval_tree: dict, threat_tree: dict, last_move_details: dict = None) -> str:
     """
@@ -73,10 +77,11 @@ def create_annotation_prompt(fen: str, current_eval: float, eval_tree: dict, thr
         "IMPORTANT: Respond with exactly ONE sentence (max 25 words) focusing on the impact of the last move. "
         "Do not mention numbers, tree details, or reference the evaluation trees - they are only for internal guidance.\n\n"
         f"Last move: {last_move_str}\n"
-        f"Current position rating: {current_rating:.2f}\n"
+        f"Most recent move rating: {current_rating:.2f}\n"
         f"Position (FEN): {fen}\n\n"
         "Regular Eval Tree (internal guidance only):\n"
-        "Each move's rating shows how much it improves (1.0) or worsens (0.0) the position:\n"
+        "Shows the top candidate moves for the next N turns (alternating colors). "
+        "Each move's rating (0.0-1.0) shows how much it improves the position:\n"
         f"{eval_tree_str}\n\n"
         "Threat Tree (internal guidance only):\n"
         "Shows opponent's potential moves if you skip your turn:\n"
@@ -103,20 +108,27 @@ def generate_conversation_payload(positions_data: list) -> list:
         {
             "role": "system",
             "content": (
-                "You are a chess expert. Your task is to generate a very concise annotation (one sentence, max 25 words) "
-                "for a given chess position. You are provided with internal context including the regular evaluation tree "
-                "and a threat tree (which represent candidate moves and opponent's threats if the player skipped their move). "
-                "The evaluation values are transformed to a 0-1 scale where:\n"
-                "- 0.0 represents a terrible move (worse than -2.0)\n"
-                "- 0.5 represents an equal position (0.0)\n"
-                "- 1.0 represents a perfect move (better than +2.0)\n\n"
-                "IMPORTANT FORMATTING RULES:\n"
-                "1. Your response must be exactly ONE sentence\n"
-                "2. Maximum 25 words\n"
-                "3. Do not mention raw numbers or tree details\n"
-                "4. Focus on the impact of the last move and potential ideas\n"
-                "5. The evaluation trees are for internal guidance only - never reference them in your output\n\n"
+                "You are an experienced chess commentator. Your task is to provide concise, insightful annotations "
+                "that combine strategic understanding with natural commentary. You have access to engine evaluations "
+                "and analysis trees, but your goal is to explain the position in human terms.\n\n"
+                "ANALYSIS GUIDELINES:\n"
+                "1. Use the evaluation trees as a guide to identify key moves and ideas, but don't mention them directly\n"
+                "2. Focus on explaining the strategic impact of the last move\n"
+                "3. Occasionally mention specific moves or ideas when they're particularly important\n"
+                "4. Keep your analysis concise (1-2 sentences, max 25 words)\n"
+                "5. Consider alternative moves and their implications\n"
+                "6. Note when standard moves don't work due to specific position features\n\n"
+                "STYLE GUIDELINES:\n"
+                "1. Write like a chess commentator, not a computer\n"
+                "2. Use natural language and chess terminology\n"
+                "3. Focus on ideas and plans rather than raw evaluations\n"
+                "4. Be specific but avoid technical details\n"
+                "5. Reference common patterns and standard moves when relevant\n"
+                "6. Explain why certain moves work or don't work in the specific position\n\n"
                 "GOOD EXAMPLES:\n"
+                "- 'White keeps a considerable edge in view of his better central control and Black's unstable central knight.'\n"
+                "- 'In this case, the standard 16.Ne5 does not work since the d4-pawn is hanging.'\n"
+                "- 'This is an important alternative, such a position has already been examined with an extra Bc1-d2 and with the a-pawns still on their initial squares.'\n"
                 "- 'White's e4 creates a strong center and opens lines for development.'\n"
                 "- 'Black's knight retreat allows White to gain space in the center.'\n"
                 "- 'The bishop exchange weakens Black's kingside structure.'\n\n"
@@ -124,8 +136,12 @@ def generate_conversation_payload(positions_data: list) -> list:
                 "- 'The position is equal with a rating of 0.5.' (mentions numbers)\n"
                 "- 'White has several good moves including e4, d4, and Nf3.' (too general)\n"
                 "- 'Black's position is worse because of the threat tree showing Qh4.' (mentions internal details)\n"
-                "- 'The evaluation tree suggests White is better.' (references internal guidance)\n\n"
-                "Use the evaluation trees only to inform your analysis, but keep your response brief and focused on the key strategic point."
+                "- 'The evaluation tree suggests White is better.' (references internal guidance)\n"
+                "- 'White's move improves the position by 0.3.' (too technical)\n\n"
+                "Remember: You're a chess commentator explaining the game to an audience. Use the engine analysis "
+                "to guide your understanding, but focus on explaining the ideas and plans in human terms. "
+                "Reference standard moves and patterns when relevant, and explain why they work or don't work "
+                "in the specific position."
             )
         }
     ]

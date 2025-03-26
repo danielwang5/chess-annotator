@@ -13,7 +13,7 @@ def get_annotation_from_chatgpt(prompt: str) -> str:
     """
     try:
         response = openai.chat.completions.create(
-            model="gpt-4",  # Use a model you have access to (e.g., "gpt-4")
+            model="gpt-4o",  # Use a model you have access to (e.g., "gpt-4")
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
             max_tokens=150  # Adjust as needed for brevity.
